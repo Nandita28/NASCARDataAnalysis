@@ -1,0 +1,29 @@
+---
+title: "S&P500 Company Details"
+output: word_document
+---
+
+The following code is used to retrieve details from Standard & Poor 500 or S&P, an American stock market index based on the market capitalizations of 500 large companies having common stock listed on the NYSE or NASDAQ and shows the list of companies that were added to S&P since 2010.
+
+
+```{r loadLibrary, echo=FALSE, include=FALSE}
+#Required libraries
+library("dplyr")
+library("rvest")
+```
+
+#List of Companies added to S&P500 since 2010
+
+```{r s&p500CompanyDetails, echo=FALSE}
+# R code
+
+url <- "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+
+SP500Data <- url %>% read_html()
+
+SP500Data <- html_table(html_nodes(SP500Data, "table")[[1]], fill =T) %>% data.frame() %>% filter(!Date.first.added == "")%>%mutate(YearAdded = as.numeric(substr (Date.first.added, 0,regexpr('-',Date.first.added)-1))) %>%arrange(YearAdded) %>% filter(YearAdded >= 2010) %>% select(Security, YearAdded) %>% 
+  rename(CompanyName = Security)
+
+# List of companies added to S&P500 since 2010	
+SP500Data
+```
